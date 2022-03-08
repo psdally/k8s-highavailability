@@ -1,0 +1,91 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-allpods-to-dns
+spec:
+
+  policyTypes:
+  - Egress
+
+  podSelector: {} 
+  egress:
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1 
+kind: NetworkPolicy 
+metadata:   
+  name: allow-cronjob-to-examplecom
+spec:   
+  podSelector:     
+    matchLabels:       
+      app.kubernetes.io/component: cronjob
+  policyTypes:   
+  - Egress   
+  egress:   
+  - to:     
+    - ipBlock:         
+        cidr: 93.184.216.34/32
+    ports:     
+    - protocol: TCP       
+      port: 80
+---
+# TODO The API server has a "real" IP address that must also
+# be allowed in  addition to the 10.9
+# kubectl get endpoints --namespace default kubernetes
+# 
+apiVersion: networking.k8s.io/v1 
+kind: NetworkPolicy 
+metadata:   
+  name: allow-cronjob-to-apiserver
+spec:   
+  podSelector:     
+    matchLabels:       
+      app.kubernetes.io/component: cronjob
+  policyTypes:   
+  - Egress   
+  egress:   
+  - to:     
+    - ipBlock:         
+        cidr: 10.96.0.1/32
+    - ipBlock:         
+        cidr: 192.168.49.2/32
+    ports:     
+    - protocol: TCP       
+      port: 443
+    - protocol: TCP       
+      port: 8443
+---
+apiVersion: networking.k8s.io/v1 
+kind: NetworkPolicy 
+metadata:   
+  name: allow-ingress-to-app
+spec:   
+  podSelector:     
+    matchLabels:       
+      app.kubernetes.io/component: webserver
+  policyTypes:   
+  - Ingress   
+  ingress:   
+  - from:     
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+    ports:     
+    - protocol: TCP       
+      port: 8080
+
+

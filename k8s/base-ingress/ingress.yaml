@@ -1,0 +1,29 @@
+# An Ingress is an API object that manages external access to the services in the cluster, 
+# in this case, via TLS(HTTPS).
+# 
+# It should be noted that while we are only supporting TLS for access to the Ingress, the TLS
+# termination is handled by a load-balancer in front of the actual Ingress service.  As such, 
+# the rules must all be under /spec/rules/n/http and not /spec/rules/n/https
+#
+# Furthermore, the path must start with the namespace name - and since the namespace name
+# varies by environment, it will need to be patched in the overlays, and therefore a
+# placeholder is included here
+#
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: helloworld-ingress
+  annotations:
+    kubernetes.io/ingress.class: placeholder
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /helloworld/(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: helloworld-svc
+            port:
+              number: 8080

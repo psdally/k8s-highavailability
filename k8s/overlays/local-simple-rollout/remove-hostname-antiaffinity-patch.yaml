@@ -1,0 +1,8 @@
+# Remove the host name podAntiAffinity in the local overlay only since
+# the local environment (typically) has only one worker Node
+- op: test
+  path: /spec/template/spec/affinity/podAntiAffinity/requiredDuringSchedulingIgnoredDuringExecution/0/topologyKey
+  value: kubernetes.io/hostname
+
+- op: remove
+  path: /spec/template/spec/affinity/podAntiAffinity/requiredDuringSchedulingIgnoredDuringExecution/0

@@ -1,0 +1,9 @@
+# Remove the zone topologySpreadConstraint in the local overlay only since
+# the local environment (typically) has only one worker Node, and therefore 
+# only one zone label
+- op: test
+  path: /spec/template/spec/topologySpreadConstraints/0/topologyKey
+  value: topology.kubernetes.io/zone
+
+- op: remove
+  path: /spec/template/spec/topologySpreadConstraints/0

@@ -1,0 +1,28 @@
+namespace: dev-demo-highavailability-ns
+
+bases:
+- ../../base-common
+
+generatorOptions:
+ disableNameSuffixHash: true
+
+secretGenerator:
+- name: htpasswd1
+  files:
+  - secrets/.htpasswd1
+- name: htpasswd2
+  files:
+  - secrets/.htpasswd2
+
+configMapGenerator:
+- name: env
+  files:
+  - configmaps/env.html
+ 
+patches:
+- path: rolebinding-patch.yaml
+  target:
+    version: v1
+    kind: RoleBinding
+    group: rbac.authorization.k8s.io
+    name: content-updater

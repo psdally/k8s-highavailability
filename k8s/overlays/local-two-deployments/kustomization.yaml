@@ -1,0 +1,29 @@
+namespace: local-demo-highavailability-ns
+
+bases:
+- ../deployment-a
+- ../deployment-b
+- ../local-simple-rollout
+
+generatorOptions:
+ disableNameSuffixHash: true
+ 
+patches:
+- path: remove-hostname-antiaffinity-patch.yaml
+  target:
+    version: v1
+    kind: Deployment
+    group: apps
+    name: helloworld-deployment-.*
+- path: remove-topologyspreadconstraint-patch.yaml
+  target:
+    version: v1
+    kind: Deployment
+    group: apps
+    name: helloworld-deployment-.*
+- path: ingress-patch.yaml
+  target:
+    version: v1
+    kind: Ingress
+    group: networking.k8s.io
+    name: helloworld-ingress-.*

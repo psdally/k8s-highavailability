@@ -1,0 +1,15 @@
+FROM nginx:latest
+
+RUN echo "Installing packages" && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        apache2-utils \
+        curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
+    echo "Installing kubectl" && \
+    cd /usr/bin && \
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x /usr/bin/kubectl
+
+COPY www/ /www/

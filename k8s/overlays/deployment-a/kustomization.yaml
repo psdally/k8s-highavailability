@@ -1,0 +1,11 @@
+bases:
+- ../../base-deployment
+
+generatorOptions:
+ disableNameSuffixHash: true
+
+commonLabels:
+  app.kubernetes.io/instance: a
+
+nameSuffix: -a
+

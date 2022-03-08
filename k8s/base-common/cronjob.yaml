@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 10
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: getcontent
+            app.kubernetes.io/part-of: helloworld
+            app.kubernetes.io/instance: default
+            app.kubernetes.io/component: cronjob
+        spec:
+          containers:
+          - name: getcontent
+            image: helloworld-webserver:1.0.0
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/bash
+            - -c
+            - |
+              curl -o /tmp/example.html http://example.com
+              DATE=$(date)
+              sed -i "s/Example Domain/Example Domain - ${DATE}/" /tmp/example.html
+              kubectl create configmap example-html --from-file=/tmp/example.html --dry-run=client -o=yaml | kubectl apply -f -
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                cpu: 50m
+                memory: 96Mi
+          restartPolicy: Never
+      backoffLimit: 0  
+      parallelism: 1
+      completions: 1
