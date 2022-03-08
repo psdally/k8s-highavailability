@@ -1,1 +1,1 @@
-Please see: https://github.com/psdally/k8s-highavailability
+Please see: https://medium.com/p/7c0ba29778a4
