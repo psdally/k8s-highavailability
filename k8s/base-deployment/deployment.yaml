@@ -3,25 +3,8 @@ kind: Deployment
 metadata:
   name: helloworld-deployment
 spec:
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 0%
-      maxUnavailable: 50%
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: nginx
-      app.kubernetes.io/part-of: helloworld
-      app.kubernetes.io/instance: default
-      app.kubernetes.io/component: webserver
   replicas: 2
   template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: nginx
-        app.kubernetes.io/part-of: helloworld
-        app.kubernetes.io/instance: default
-        app.kubernetes.io/component: webserver
     spec:
       affinity:
         podAntiAffinity:
@@ -50,6 +33,22 @@ spec:
       containers:
         - name: hello-world
           image: helloworld-webserver:1.0.0
+          readinessProbe:
+            httpGet:
+              path: /env.html
+              port: http
+            periodSeconds: 5
+            failureThreshold: 1
+            successThreshold: 1
+            timeoutSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /env.html
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+            timeoutSeconds: 1
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -77,22 +76,6 @@ spec:
           ports:
           - name: http
             containerPort: 8080
-          livenessProbe:
-            httpGet:
-              path: /env.html
-              port: http
-            periodSeconds: 10
-            failureThreshold: 3
-            successThreshold: 1
-            timeoutSeconds: 1
-          readinessProbe:
-            httpGet:
-              path: /env.html
-              port: http
-            periodSeconds: 5
-            failureThreshold: 1
-            successThreshold: 1
-            timeoutSeconds: 1
       volumes:
         - name: nginx-conf
           configMap:
@@ -109,3 +92,20 @@ spec:
         - name: example-html
           configMap:
             name: example-html
+    metadata:
+      labels:
+        app.kubernetes.io/name: nginx
+        app.kubernetes.io/part-of: helloworld
+        app.kubernetes.io/instance: default
+        app.kubernetes.io/component: webserver
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0%
+      maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nginx
+      app.kubernetes.io/part-of: helloworld
+      app.kubernetes.io/instance: default
+      app.kubernetes.io/component: webserver
