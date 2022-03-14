@@ -13,3 +13,4 @@ RUN echo "Installing packages" && \
     chmod +x /usr/bin/kubectl
 
 COPY www/ /www/
+COPY v2.0.0.html /www/v2.0.0.html

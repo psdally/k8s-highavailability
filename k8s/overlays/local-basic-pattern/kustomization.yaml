@@ -24,3 +24,7 @@ patches:
     kind: Ingress
     group: networking.k8s.io
     name: helloworld-ingress
+
+images:
+- name: helloworld-webserver
+  newTag: 1.0.0

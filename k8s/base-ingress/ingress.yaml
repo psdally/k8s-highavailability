@@ -15,6 +15,7 @@ metadata:
   name: helloworld-ingress
   annotations:
     kubernetes.io/ingress.class: placeholder
+    nginx.ingress.kubernetes.io/service-upstream: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   rules:
